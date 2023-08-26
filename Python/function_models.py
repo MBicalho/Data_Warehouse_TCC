@@ -35,13 +35,11 @@ def InfoDataAtualDetalhada():
     return info
 
 def ConnectionBD(database='', drive=''):
-    """
-    Banco = Ex: CTN_PRODUCAO.\n
-    """
-    server_name = 'LAPTOP-34OQSR9F\SQLEXPRESS'
-    database = 'CEFET_PRODUCAO'
-    username = 'admin'
-    ps = 'admin'
+
+    server_name = ''
+    database = ''
+    username = ''
+    ps = ''
 
 
     if not drive:
@@ -264,15 +262,9 @@ def CabecalhoLog(titulo):
 
 def CaminhoPadraoRetornoSIPARQ(complemento=''):
     """
-    O caminho padrão de armazenamento de arquivos no SIPARQ é:\n
-    \\192.168.254.251\Processamento de dados\ArquivoRetornoCobranca\ \n
 
-    Se for necessário, pode enviar um complemento para ser inserido no caminho default.\n
-    *OBS*: O complemento deve ser enviado com duas \\, inclusive no final. Não enviar as barras no inicio. \n
-
-    EX: NEOENERGIA\\\\TESTE\\\\
     """
-    path = '\\\\192.168.254.251\\Processamento de dados\\ArquivoRetornoCobranca\\'
+    path = ''
     if complemento:
         return path + complemento
     else:
@@ -280,15 +272,9 @@ def CaminhoPadraoRetornoSIPARQ(complemento=''):
 
 def CaminhoPadraoEnvioSIPARQ(complemento=''):
     """
-    O caminho padrão de armazenamento de arquivos no SIPARQ é:\n
-    \\192.168.254.251\Processamento de dados\ArquivoEnvioCobranca\ \n
 
-    Se for necessário, pode enviar um complemento para ser inserido no caminho default.\n
-    *OBS*: O complemento deve ser enviado com duas \\, inclusive no final. Não enviar as barras no inicio. \n
-
-    EX: NEOENERGIA\\\\TESTE\\\\
     """
-    path = '\\\\192.168.254.251\\Processamento de dados\\ArquivoEnvioCobranca\\'
+    path = ''
     if complemento:
         return path + complemento
     else:
@@ -325,128 +311,25 @@ def CriaArquivoLog(caminho, nome, escrever_arquivo=False, cabecalho=False, titul
         
         _file.write(info_arquivo)
 
-def FontesNeoserv(fonte):
-    if fonte == 'P':
-        return('CELPE')
-    if fonte == 'B':
-        return('COELBA')
-    if fonte == 'R':
-        return('COSERN')
-    else:
-        return('ELEKTRO')
 
 def MoveFiles(origem, destino):
     shutil.move(origem, destino)
 
 def SelectLisArquivosCodensa():
-    sql = 'SELECT * FROM [CTN_COBRANCA].[DBO].[LISTA_ARQUIVOS_LIS_CODENSA]'
+    sql = ''
 
     lis = pd.read_sql(
                 sql= sql,
-                con= ConnectionBD('CTN_COBRANCA'))
+                con= ConnectionBD(''))
     
     return pd.DataFrame(lis)
 
-def ConsultaPendenciasEnel(id_concessionaria='', drive=''):
-    sql = ("""SELECT ID_CONCESSIONARIA,
-            CASE ITEM_PESQUISA WHEN 'F' THEN 1 WHEN 'O' THEN 2 WHEN 'A' THEN 3 WHEN 'R' THEN 6 END ID_CONSULTA,
-            MAX(DT_PESQUISA) DT_PESQUISA,
-            ITEM_PESQUISA,
-            CASE ID_CONCESSIONARIA WHEN 703 THEN 'Celg' WHEN 57  THEN 'Coelce' WHEN 38 THEN 'Ampla' ELSE '' END AS CONCESSIONARIA
-            FROM [controle].[RETORNO_ENEL]
-            WHERE ID_CONCESSIONARIA = {}
-            GROUP BY ID_CONCESSIONARIA, ITEM_PESQUISA
-            ORDER BY CASE ITEM_PESQUISA WHEN 'F' THEN 1 WHEN 'O' THEN 2 WHEN 'A' THEN 3 END""").format(id_concessionaria)
-
-    pendentes = pd.read_sql(sql= sql,
-                            con= ConnectionBD(database='CTN_COBRANCA', drive=drive))
-    
-    return pd.DataFrame(pendentes)
-
-def AjustaMatriculasArquivosLIS():
-    retorno_requisicao = ''
-
-    requisicao_bd = ConnectionBD('CTN_COBRANCA').connect()
-
-    requisicao_bd.execution_options(autocommit=True)
-
-    _retorno = requisicao_bd.execute('EXEC [CTN_COBRANCA].[cobranca_importa].[SP_ATUALIZA_MATRICULAS_LIS]')
-
-    for row in _retorno:
-        for i in row:
-            retorno_requisicao += i
-    
-    return retorno_requisicao
 
 
 def RemoveColumns():
     return ('Unnamed', 'COD_PLAN', 'COD_CARG', 'COD_TIP_PRODUC', 'COD_TIP_PRODUC', 'ID.1', 'CODIGO_CARGO', 'PRODUCTO', 'LLAVE', 'ID_RECAUDO', 'ANTIGÜEDAD', 'FACT_X_HACER', 'CAT_CUOT_FACT',
             'COD_TIP_PRODUC', 'FEC_PRIM_VENC', 'FEC_SEG_VENC', 'COD_CARGO')
-
-def RegraFormatLis(lis):
-    if lis == 'LIS001':
-        return {
-                'columns': ['CRMCONTRACTNUMBER', 'NIE', 'VASCONTRACTNUMBER', 'FECHA_INICIO_SUSCRIPCION', 'VALOR', 'ESTADO'],
-                'columns_format': ['NIE', 'COD_PLAN', 'ID', 'FEC_INI', 'N_FACT', 'CUOT_X_FACT', 'CUOT_FACT', 'SALDO_INC', 'ANTIGUEDAD', 'SALD_FAC_X_PAGAR', 'SALD_FAC_X_CUOT', 'SALD_FAC_X_PAGAR_IVA', 'SALD_FAC_X_PAGAR_INT_MORA', 'TOT_PAG_CAPT', 'TOT_PAG_IVA', 'TOT_PAG_INT_MORA', 'SALD_X_FACT', 'FEC_FAC', 'CICLO', 'ESTADO', 'TOT_PAG', 'DIAS_MORA', 'COD_TIP_PRODUC', 'N_SERVICIO', 'ID_USAGE'],
-                'variables': ['FECHA_INICIO_SUSCRIPCION']
-        }
-    
-    elif lis == 'LIS003':
-        return {
-            'columns': ['NIE', 'VASCONTRACTNUMBER', 'VALOR', 'FEC_ING_PAG', 'FEC_CARG_ECO', 'N_SERVICIO', 'CRMCONTRACTNUMBER'],
-            'columns_format': ['NIE', 'COD_PLAN', 'COD_CARG', 'ID', 'VALOR', 'FEC_ING_PAG', 'FEC_CARG_ECO', 'COD_TIP_PRODUC', 'N_SERVICIO', 'ID_USAGE'],
-            'variables': ['FEC_ING_PAG', 'FEC_CARG_ECO']
-        }
-    
-    elif lis == 'LIS004':
-        return {
-            'columns': ['NIE', 'VASCONTRACTNUMBER', 'NUMERO_FACTURA', 'VALOR', 'FECHA_FACTURA', 'CICLO_FACTURA', 'FEC_CREA_ECO', 'N_SERVICIO', 'FEC_PROCESO', 'CRMCONTRACTNUMBER'],
-            'columns_format': ['NIE', 'COD_PLAN', 'ID', 'N_FACT', 'VALOR_FACT_ITEM', 'FEC_FACT', 'CICLO', 'COD_CARG', 'FEC_CREA_ECO', 'ANTIGUEDAD', 'FACT_X_HACER', 'CAT_CUOT_FACT', 'COD_TIP_PRODUC', 'N_SERVICIO', 'FEC_PRIM_VENC', 'FEC_SEG_VENC', 'FEC_PROCESO', 'ID_USAGE'],
-            'variables': ['FECHA_FACTURA', 'FEC_CREA_ECO', 'FEC_PROCESO']
-        }
-    
-    elif lis == 'LIS005':
-        return {
-            'columns': ['NIE', 'VASCONTRACTNUMBER', 'ANTIGUEDAD', 'NUMERO_FACTURA', 'VALOR', 'DIAS_MORA', 'FECHA_FACTURA', 'CRMCONTRACTNUMBER'],
-            'variables': ['FECHA_FACTURA']
-        }
-    
-    elif lis == 'LIS012':
-        return {
-            'columns': ['NIE', 'FEC_AJUSTE', 'CARG_REFAC', 'VALOR_INIC', 'VALOR_AJUST', 'VALOR_MODIF', 'N_AUTORIZ', 'SOCIO', 'ID', 'FEC_CARGUE_ECO', 'COD_PLAN', 'COD_TIP_PRODUC', 'N_SERVICIO', 'ID_USAGE'],
-            'variables': ['FEC_AJUSTE', 'FEC_CARGUE_ECO']
-        }
-    
-    elif lis == 'LIS013':
-        return {
-            'columns': ['NIE', 'FECHA_CANCELACION', 'VALOR', 'VASCONTRACTNUMBER', 'FECHA_INICIO_SUSCRIPCION', 'CRMCONTRACTNUMBER', 'ESTADO'],
-            'columns_format': ['NIE', 'FEC_CANCELA', 'COD_CARG', 'COD_PLAN', 'VALOR_NO_PAG_ITEM', 'ID', 'ANTIGUEDAD', 'FACT_X_HACER', 'CANT_CUOT_FACT', 'VALOR_X_FACT_CUOT', 'FEC_CREAC', 'DIAS_MORA', 'COD_TIP_PRODUC', 'N_SERVICIO', 'FEC_PRIM_VENC', 'FEC_SEG_VENC', 'CICLO', 'ID_USAGE'],
-            'variables': ['FECHA_INICIO_SUSCRIPCION']
-        }
-    
-    elif lis == 'LIS014':
-        return {
-            'columns': ['NIE', 'COD_PLAN', 'FEC_CREA_ECO', 'ID', 'CUOTA_ECO', 'VALOR_CUOTA', 'IVA', 'COD_TIP_PRODUC', 'N_SERVICIO', 'ID_USAGE'],
-            'variables': ['FEC_CREA_ECO']
-        }
-    
-    elif lis == 'LIS016':
-        return {
-            'columns': ['NIE', 'COD_PLAN', 'COD_CARG', 'ID', 'VALOR', 'FEC_ING_PAG', 'FEC_CARG_ECO', 'COD_TIP_PRODUC', 'N_SERVICIO', 'ID_USAGE'],
-            'variables': ['FEC_ING_PAG', 'FEC_CARG_ECO']
-        }
-    
-    elif lis == 'ANULADOS':
-        return {
-            'columns': ['NIE', 'COD_PLAN', 'COD_CARG', 'ID', 'VALOR', 'FEC_ING_PAG', 'FEC_CARG_ECO', 'COD_TIP_PRODUC', 'N_SERVICIO', 'ESTADO_PAGO', 'FEC_ANULACION', 'ID_USAGE'],
-            'variables': ['FEC_ING_PAG', 'FEC_CARG_ECO', 'FEC_ANULACION']
-        }
-    
-    elif lis == 'FINALIZADOS':
-        return {
-            'columns': ['NRO_CUENTA', 'NRO_SERVICIO', 'NRO_ID_VENTA', 'MONTO_CUOTA', 'CODIGO_PLAN', 'DESCRIPCION', 'ID_STATE_ESTADO', 'AUDIT_DATE_FECHAFINALIZACION', 'CODE_SOCIO', 'ID_USAGE'],
-            'variables': ['AUDIT_DATE_FECHAFINALIZACION']
-        }
+            
     
 def CountTimeStart():
     return time.time()
