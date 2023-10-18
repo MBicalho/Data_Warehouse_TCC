@@ -30,7 +30,7 @@ def insereFato(cursor):
     lista = [30, 60, 90]
     status_reprovado = [0]
     status_aprovado = [1]
-    for fdp in range(1,69):
+    for i in range(1,69):
         for aluno_id in range(1, 20): # para cada aluno
             #for materia_id in range(1, 69): # para cada matéria
                 #for tempo_id in range(1, 30): # para cada semestre
@@ -67,16 +67,6 @@ def insereAluno(N, cursor):
         cursor.execute(sql,nome,matricula,ano_inicio)
         cursor.commit()
 
-def insereHorario(cursor):
-    lista = [2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020,2021,2022,2023]
-    sql = ('''SELECT * FROM
-            CEFET_PRODUCAO.DBO.DimMateria (NOLOCK)''')
-    #     sql = '''INSERT INTO CEFET_PRODUCAO.DBO.DimALUNO (NOME_ALUNO, MATRICULA_ALUNO, ANO_INICIO) VALUES (?, ?, ?)'''
-    cursor.execute(sql)
-
-    cursor.commit()
-
-
 if __name__ == "__main__":
 
     #consultaAlunos()
@@ -85,10 +75,11 @@ if __name__ == "__main__":
     cursor = conn.cursor()
     insereHorario(cursor)
     # insereAluno(20, cursor)
+    # insereFato(cursor)
 
     # fm.ConsultaAluno()
 
-
+    #executar primeiro o insere aluno, depois preencher a fato
 
     # Então, recuperamos todos os alunos.
     
