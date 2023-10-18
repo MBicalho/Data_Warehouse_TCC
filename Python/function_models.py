@@ -471,6 +471,15 @@ def ConsultaAluno(drive=''):
     
     return pd.DataFrame(pendentes)
 
+def consultaMateria(drive=''):
+    sql = ("""SELECT * FROM
+              CEFET_PRODUCAO.DBO.DimMateria (NOLOCK)""")
+
+    pendentes = pd.read_sql(sql= sql,
+                            con= ConnectionBD(database='CEFET_PRODUCAO', drive=drive))
+    
+    return pd.DataFrame(pendentes)
+
 if __name__ == '__main__':
     print(ConsultaAluno())
         
