@@ -11,10 +11,10 @@ import sqlalchemy
 df_return = pd.DataFrame()
 
 def connectDatabase():
-    server = 'MATHEUSBICALHO\SQLEXPRESS'
-    database = 'CEFET_PRODUCAO'
-    username = 'admin'
-    password = 'admin'
+    server = 'SEUHOSTNAME'
+    database = 'SEUDATABASE'
+    username = 'SEUUSERNAME'
+    password = 'SEUPASSWORD'
     driver= '{ODBC Driver 17 for SQL Server}'
 
     connection_string = f'DRIVER={driver};SERVER={server};DATABASE={database};UID={username};PWD={password}'
