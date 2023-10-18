@@ -73,7 +73,6 @@ if __name__ == "__main__":
     
     conn = connectDatabase()
     cursor = conn.cursor()
-    insereHorario(cursor)
     # insereAluno(20, cursor)
     # insereFato(cursor)
 
